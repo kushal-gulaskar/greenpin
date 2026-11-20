@@ -1,0 +1,11 @@
+# Phone sign-in
+
+In a restricted development project, open **Authentication → Sign In / Providers → Phone**. Enable phone sign-in and configure an SMS provider as required by Supabase Auth. Under **Test Phone Numbers and OTPs**, enter two separate development number/code pairs separated by commas. Use country code 91 and the ten-digit mobile number without plus signs or spaces in the dashboard. Set **Test OTPs Valid Until** to the end of the testing period and save. Supabase compares these codes server-side and skips SMS delivery for matching test numbers. Keep both pairs outside Vite variables, source control and public deployments. For a local Supabase stack, the official test guide documents provider placeholders and the private test number mapping. [Test auth flows](https://supabase.com/docs/guides/auth/testing-auth-flows)
+
+The app accepts Indian mobile numbers beginning with 6–9, normalizes them to +91 E.164, calls signInWithOtp and then verifyOtp with type sms. Resend is available after 60 seconds. Supabase enforces its configured rate and expiry limits. The UI shows invalid/expired code, rate-limit and delivery errors. A session gate guards all cloud screens. The SDK persists and refreshes the session. Account changes remount the workspace and writes use a token scoped to the expected identity. Sign out under My profile and confirm. [Supabase phone sign-in](https://supabase.com/docs/guides/auth/phone-login)
+
+On successful sign-in the profile repository creates a row keyed by the Auth UUID with conflict-ignore semantics, then reads permitted fields. Users can edit display name, city, state and preferred language. Phone stays in Supabase Auth. There is no application password table.
+
+## Before real SMS
+
+Remove development test pairs. Configure a supported SMS provider in the project's Phone settings, including its approved sender and applicable India messaging registrations/templates. Configure OTP lifetime, rate limits and provider spending controls. Test delivery, verification, resend and expiry on an actual handset in a separate acceptance run. A test-number sign-in validates the Auth flow without establishing SMS deliverability. [Provider configuration](https://supabase.com/docs/guides/auth/phone-login)
